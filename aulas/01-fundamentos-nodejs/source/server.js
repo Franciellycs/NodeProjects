@@ -1,31 +1,31 @@
-import http from 'node:http'
+import http from 'node:http';
+import { json } from './middlewares/json.js';
+import { routes } from './middlewares/routes.js';
 
 //Padrão de Exportação CommonJS -> Require --> const http = require('http')
 //ESModules é o mais utilizado -> import/export --> http = require('http')
 
-const users = []
+const server = http.createServer(async(req, res) => {
+     const { method, url } = req
 
-const server = http.createServer((req, res) => {
-     const { mehod, URL } = req
+     await json(req, res)
 
-     if (method == 'GET' && url == '/users'){
-          return res
-          .setHeader('Content-type', 'application/json')
-          .end(JSON.stringify(users))
+     const route = routes.find(route => {
+          return route.method === method && route.path === url
+
+     } )
+
+
+     if (route) {
+          return route.handler(req, res)
      }
 
-     if (method == 'POST' && url == 'users'){
-          users.push({
-               id: 1,
-               name: 'John Doe',
-               email: 'johndoe@example.com',
-          })
-
-          return res.writeHead(201).end()
-     }
+     console.log(json)
 
      return res.writeHead(404).end('not found')
 
-} )
+     
+
+})
 
 server.listen(3333) //localhost
