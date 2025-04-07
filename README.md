@@ -19,7 +19,6 @@ Cada pasta contém um projeto independente com seu próprio `package.json` e ins
 ## 📦 Como rodar os projetos
 
 1. Acesse a pasta do projeto que deseja executar:
-```bash
 cd nome-do-projeto
 
 2. Instale as dependências:
