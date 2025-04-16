@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { json } from './middlewares/json.js';
 import { routes } from './middlewares/routes.js';
+import { extractQueryParams } from './utils/extrat-query-params.js';
 
 //Padrão de Exportação CommonJS -> Require --> const http = require('http')
 //ESModules é o mais utilizado -> import/export --> http = require('http')
@@ -11,21 +12,23 @@ const server = http.createServer(async(req, res) => {
      await json(req, res)
 
      const route = routes.find(route => {
-          return route.method === method && route.path === url
+          return route.method === method && route.path.test(url)
 
      } )
 
 
      if (route) {
-          return route.handler(req, res)
+         const routeParams = req.url.match(route.path)
+
+         const { query, ...params } = routeParams.groups
+
+         req.params = params
+         req.query = query ? extractQueryParams(query) : {}
+
+         return route.handler(req, res)
      }
 
-     console.log(json)
-
      return res.writeHead(404).end('not found')
-
-     
-
 })
 
 server.listen(3333) //localhost

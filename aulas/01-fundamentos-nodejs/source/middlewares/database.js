@@ -36,4 +36,28 @@ export class Database {
 
         return data;
     }
+
+    update(table, id, data) {
+        this.#database[table] = this.#database[table].filter(item => item != null)
+        const rowIndex = this.#database[table].findIndex(row => row.id === id);
+        console.log(rowIndex)
+
+        if(rowIndex > -1) {
+            this.#database[table][rowIndex] = { id, ...data}
+            
+            this.#persist()
+        }
+    }
+
+    delete(table, id) {
+        this.#database[table] = this.#database[table].filter(item => item != null)
+        const rowIndex = this.#database[table].findIndex(row => row.id === id);
+        console.log(rowIndex)
+
+        if(rowIndex > -1) {
+            this.#database[table].splice(rowIndex, 1)
+            
+            this.#persist()
+        }
+    }
 }
